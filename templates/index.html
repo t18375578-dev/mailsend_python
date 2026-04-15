@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Email Sender</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #74ebd5, #9face6);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 420px;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+}
+
+textarea {
+  height: 120px;
+  resize: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #574fd6;
+}
+
+button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+#result {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>📧 이메일 보내기</h2>
+
+  <input id="to" placeholder="받는 사람 이메일">
+  <input id="subject" placeholder="제목">
+  <textarea id="body" placeholder="내용"></textarea>
+
+  <button id="sendBtn" onclick="sendEmail()">전송하기</button>
+
+  <p id="result"></p>
+</div>
+
+<script>
+async function sendEmail() {
+  const to = document.getElementById("to");
+  const subject = document.getElementById("subject");
+  const body = document.getElementById("body");
+  const result = document.getElementById("result");
+  const btn = document.getElementById("sendBtn");
+
+  const data = {
+    to: to.value,
+    subject: subject.value,
+    body: body.value
+  };
+
+  // ⏳ 로딩 상태
+  result.innerText = "📤 전송 중...";
+  result.style.color = "black";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch("/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const resultData = await res.json();
+
+    // 📩 결과 메시지 + 색상
+    result.innerText = resultData.message;
+    result.style.color = res.ok ? "green" : "red";
+
+    // ✅ 성공 시 입력값 초기화
+    if (res.ok) {
+      to.value = "";
+      subject.value = "";
+      body.value = "";
+    }
+
+  } catch (error) {
+    result.innerText = "❌ 서버 오류 발생";
+    result.style.color = "red";
+  }
+
+  // 🔓 버튼 다시 활성화
+  btn.disabled = false;
+}
+</script>
+
+</body>
+</html>

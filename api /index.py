@@ -5,8 +5,8 @@ from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
-EMAIL = "tjoeun.jr5@gmail.com"
-PASSWORD = "ssqs zvjg sesn cvsn"
+EMAIL = "t18375578@gmail.com"
+PASSWORD = "iwqz pgdv mjsq ichm"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
